@@ -15,7 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.netflix.discovery.EurekaClient;
-import com.tutorial.spring.cloud.eureka.restclient.dto.Price;
+import com.tutorial.spring.cloud.eureka.restclient.dto.Data;
 import com.tutorial.spring.cloud.eureka.restclient.error.InvalidTickerException;
 import com.tutorial.spring.cloud.eureka.restclient.util.RestClientUtil;
 
@@ -57,13 +57,13 @@ public class TickerSymbolController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{tickersymbol}/200dma")
-	public Price get200dma(@PathVariable("tickersymbol") String tickerSymbol, @RequestParam String startDate,
+	public Data get200dma(@PathVariable("tickersymbol") String tickerSymbol, @RequestParam String startDate,
 			@RequestParam String endDate) {
 		return null;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/200dma")
-	public Price get200dmaFor1000TickerSymbols(@RequestBody String tickerSymbol, @RequestParam String startDate) {
+	public Data get200dmaFor1000TickerSymbols(@RequestBody String tickerSymbol, @RequestParam String startDate) {
 		return null;
 	}
 }
