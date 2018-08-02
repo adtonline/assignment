@@ -2,6 +2,8 @@ package com.tutorial.spring.cloud.eureka.restclient;
 
 import java.text.MessageFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -15,13 +17,19 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.netflix.discovery.EurekaClient;
-import com.tutorial.spring.cloud.eureka.restclient.dto.Price;
+import com.tutorial.spring.cloud.eureka.restclient.dto.Data;
+import com.tutorial.spring.cloud.eureka.restclient.dto.Dataset;
+import com.tutorial.spring.cloud.eureka.restclient.error.InternalServerError;
 import com.tutorial.spring.cloud.eureka.restclient.error.InvalidTickerException;
+import com.tutorial.spring.cloud.eureka.restclient.util.JsonUtil;
 import com.tutorial.spring.cloud.eureka.restclient.util.RestClientUtil;
 
 @RestController
 @RequestMapping("/api/v2")
 public class TickerSymbolController {
+	
+	private final static Logger log = LoggerFactory.getLogger(TickerSymbolController.class);
+	
 	@Autowired
 	private EurekaClient eurekaClient;
 
@@ -40,30 +48,32 @@ public class TickerSymbolController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{tickersymbol}/closePrice", produces = MediaType.APPLICATION_JSON_VALUE)
-	public String closePrice(@PathVariable("tickersymbol") String tickerSymbol, @RequestParam String startDate,
+	public Dataset closePrice(@PathVariable("tickersymbol") String tickerSymbol, @RequestParam String startDate,
 			@RequestParam String endDate) {
 		String quandlUrlWithDatasetCode = MessageFormat.format(quandlApiUrl, tickerSymbol);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(quandlUrlWithDatasetCode)
-				.queryParam("column_index", 4)
-				.queryParam("start_date", startDate)
-				.queryParam("end_date", endDate);
-		
+				.queryParam("column_index", 4).queryParam("start_date", startDate).queryParam("end_date", endDate);
 		try {
 			String json = restClientUtil.doGet(builder.toUriString(), null, null);
-			return json;
+			return JsonUtil.fromJson(json, "dataset_data", Dataset.class);
+			// TODO refactor exception handling
 		} catch (HttpClientErrorException e) {
+			log.error(e.getMessage(), e);
 			throw new InvalidTickerException(tickerSymbol);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new InternalServerError();
 		}
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{tickersymbol}/200dma")
-	public Price get200dma(@PathVariable("tickersymbol") String tickerSymbol, @RequestParam String startDate,
+	public Data get200dma(@PathVariable("tickersymbol") String tickerSymbol, @RequestParam String startDate,
 			@RequestParam String endDate) {
 		return null;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/200dma")
-	public Price get200dmaFor1000TickerSymbols(@RequestBody String tickerSymbol, @RequestParam String startDate) {
+	public Data get200dmaFor1000TickerSymbols(@RequestBody String tickerSymbol, @RequestParam String startDate) {
 		return null;
 	}
 }
