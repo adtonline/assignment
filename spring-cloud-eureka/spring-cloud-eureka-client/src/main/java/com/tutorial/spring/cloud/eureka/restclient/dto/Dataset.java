@@ -12,7 +12,6 @@ public class Dataset {
 	@JsonProperty("data")
 	private List<String[]> data;
 
-	@JsonProperty("start_date")
 	private Date startDate;
 
 	private Date endDate;
