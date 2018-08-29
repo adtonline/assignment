@@ -26,7 +26,6 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestClientUtil {
 
-	/** The log. */
 	private final Logger log = LoggerFactory.getLogger(RestClientUtil.class);
 
 	@Autowired
@@ -74,4 +73,7 @@ public class RestClientUtil {
 
 		return restTemplate;
 	}
+	
+	
+
 }

@@ -63,6 +63,8 @@ public class TickerSymbolController {
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new InternalServerError();
+		} finally {
+			
 		}
 	}
 
